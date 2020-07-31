@@ -1,0 +1,10 @@
+import logging
+
+# 配置logging
+logging.basicConfig(level=logging.DEBUG,
+                    format='%(asctime)s - %(name)s - %(levelname)s - %(message)s')
+logger = logging.getLogger(__name__)
+logger.info("Start print log")
+logger.debug("Do something.")
+logger.warning("Something maybe fail.")
+logger.info("Finish")
