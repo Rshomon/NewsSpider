@@ -19,7 +19,7 @@ COMMANDS_MODULE = 'NewsSpider.Command'
 # Obey robots.txt rules
 ROBOTSTXT_OBEY = False
 
-# LOG_LEVEL = "WARNING"
+# LOG_LEVEL = "INFO"
 
 # LOG_FILE = "info.log"
 

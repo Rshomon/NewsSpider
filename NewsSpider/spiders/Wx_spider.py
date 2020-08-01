@@ -82,10 +82,13 @@ class WxspiderSpider(scrapy.Spider):
         print("*" * 30)
         time_name = response.meta["time"]
         new_urlaaaaa = "".join(re.findall(r'url \+= \'(.*)\'', response.text))
-        print(new_urlaaaaa + "\n")
-        yield scrapy.Request(new_urlaaaaa,
-                             callback=self.parse_detail,
-                             dont_filter=True)
+        if new_urlaaaaa:
+            print(new_urlaaaaa + "\n")
+            yield scrapy.Request(new_urlaaaaa,
+                                 callback=self.parse_detail,
+                                 dont_filter=True)
+        else:
+            pass
 
     def parse_detail(self, response):
         # 正则匹配时间
@@ -100,13 +103,13 @@ class WxspiderSpider(scrapy.Spider):
         # 详情页标题
         WeixinspiderItemLoader.add_xpath("title",
                                          "//h2[@id='activity-name']/text()")
-     
+
         # 详情页作者
         WeixinspiderItemLoader.add_xpath(
             "author",
             "//div[@id='meta_content']/span[@class='rich_media_meta rich_media_meta_text']/text()"
         )
-        WeixinspiderItemLoader.add_value("push_time",push_date)
+        WeixinspiderItemLoader.add_value("push_time", push_date)
         # author = response.xpath(
         # "//div[@id='meta_content']/span[@class='rich_media_meta rich_media_meta_text']/text()"
         # ).get()
