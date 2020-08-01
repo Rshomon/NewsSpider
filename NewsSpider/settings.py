@@ -6,18 +6,28 @@
 #     https://docs.scrapy.org/en/latest/topics/settings.html
 #     https://docs.scrapy.org/en/latest/topics/downloader-middleware.html
 #     https://docs.scrapy.org/en/latest/topics/spider-middleware.html
-
+import os
 BOT_NAME = 'NewsSpider'
 
 SPIDER_MODULES = ['NewsSpider.spiders']
 NEWSPIDER_MODULE = 'NewsSpider.spiders'
 
-COMMANDS_MODULE  = 'NewsSpider.Command'
+COMMANDS_MODULE = 'NewsSpider.Command'
 # Crawl responsibly by identifying yourself (and your website) on the user-agent
 #USER_AGENT = 'NewsSpider (+http://www.yourdomain.com)'
 
 # Obey robots.txt rules
 ROBOTSTXT_OBEY = False
+
+# LOG_LEVEL = "WARNING"
+
+# LOG_FILE = "info.log"
+
+# if not os.path.isdir('log'):
+#     os.mkdir("log")
+# else:
+#     if not os.path.isfile("LOG_FILE"):
+#         os.
 
 # Configure maximum concurrent requests performed by Scrapy (default: 16)
 #CONCURRENT_REQUESTS = 32

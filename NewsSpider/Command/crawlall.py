@@ -31,7 +31,6 @@ class Command(ScrapyCommand):
 
         # 获取当前所有爬虫的名称
         spider_list = self.crawler_process.spiders.list()
-        # spider_list = ["chouti",'cnblogs']
         for name in spider_list:
             self.crawler_process.crawl(name, **opts.__dict__)
         self.crawler_process.start()
