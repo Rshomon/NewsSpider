@@ -3,3 +3,4 @@ test
 *.pyc
 __pycacge__
 .vscode
+run.py
