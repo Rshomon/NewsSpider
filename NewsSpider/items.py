@@ -18,3 +18,10 @@ class ArticelItem(scrapy.Item):
     origin = scrapy.Field()
     # 文章详情
     detail_content = scrapy.Field()
+
+
+class SiteItem(scrapy.Item):
+    # title
+    title = scrapy.Field()
+    # url
+    url = scrapy.Field()

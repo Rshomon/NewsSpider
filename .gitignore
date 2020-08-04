@@ -4,3 +4,5 @@ test
 __pycacge__
 .vscode
 run.py
+*.json
+*.html

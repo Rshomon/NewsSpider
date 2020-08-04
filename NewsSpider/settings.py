@@ -9,6 +9,9 @@
 import os
 BOT_NAME = 'NewsSpider'
 
+RETRY_ENABLED = True
+RETRY_TIMES = 5
+
 SPIDER_MODULES = ['NewsSpider.spiders']
 NEWSPIDER_MODULE = 'NewsSpider.spiders'
 
@@ -29,13 +32,32 @@ ROBOTSTXT_OBEY = False
 #     if not os.path.isfile("LOG_FILE"):
 #         os.
 
+# Redis设置
+
+# 调度器和去重
+# SCHEDULER = "scrapy_redis.scheduler.Scheduler"
+# DUPEFILTER_CLASS = "scrapy_redis.dupefilter.RFPDupeFilter"
+
+# # 连接redis
+# REDIS_URL = 'redis://@localhost:6379'
+
+# # 配置调度队列
+# # SCHEDULER_QUEUE_CLASS = 'scrapy_redis.queue.PriorityQueue'
+# # SCHEDULER_QUEUE_CLASS = 'scrapy_redis.queue.FifoQueue'
+# # SCHEDULER_QUEUE_CLASS = 'scrapy_redis.queue.LifoQueue'
+
+# # 持久化
+# SCHEDULER_FLUSH_ON_START = True
+
+
+
 # Configure maximum concurrent requests performed by Scrapy (default: 16)
 #CONCURRENT_REQUESTS = 32
 
 # Configure a delay for requests for the same website (default: 0)
 # See https://docs.scrapy.org/en/latest/topics/settings.html#download-delay
 # See also autothrottle settings and docs
-#DOWNLOAD_DELAY = 3
+# DOWNLOAD_DELAY = 1
 # The download delay setting will honor only one of:
 #CONCURRENT_REQUESTS_PER_DOMAIN = 16
 #CONCURRENT_REQUESTS_PER_IP = 16
@@ -65,8 +87,8 @@ DEFAULT_REQUEST_HEADERS = {
 # See https://docs.scrapy.org/en/latest/topics/downloader-middleware.html
 DOWNLOADER_MIDDLEWARES = {
     'NewsSpider.middlewares.UserAgentRandomMiddleware': 543,
-    'NewsSpider.middlewares.ProxyRandomMiddleware': 544,
-    'NewsSpider.middlewares.ExceptionMiddleware': 540,
+    'NewsSpider.middlewares.ProxyRandomMiddleware': 500,
+    'NewsSpider.middlewares.ExceptionMiddleware': None,
 }
 
 # Enable or disable extensions
@@ -78,7 +100,10 @@ DOWNLOADER_MIDDLEWARES = {
 # Configure item pipelines
 # See https://docs.scrapy.org/en/latest/topics/item-pipeline.html
 ITEM_PIPELINES = {
-    'NewsSpider.pipelines.NewsSpiderPipeline': 300,
+    'NewsSpider.pipelines.NewsSpiderPipeline': None,
+    'NewsSpider.pipelines.SogouSpiderPipeline': 200,
+    # 默认将返回的itme，存储到redis上
+#    'scrapy_redis.pipelines.RedisPipeline': 300,
 }
 
 # Enable and configure the AutoThrottle extension (disabled by default)

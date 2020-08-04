@@ -5,6 +5,7 @@ import logging
 from logging.handlers import RotatingFileHandler
 from colorlog import ColoredFormatter
 from urllib.parse import urlencode
+from NewsSpider.items import SiteItem
 # logger = logging.getLogger(__name__)
 # #第二步：修改日志的输出级别
 # logger.setLevel(logging.DEBUG)
@@ -62,23 +63,58 @@ class SogouengineSpider(scrapy.Spider):
             "Referer": url,
             'Host': "www.sogou.com"
         }
-        yield scrapy.Request(url, callback=self.parse, headers=headers)
+        yield scrapy.Request(
+            url,
+            callback=self.parse,
+            headers=headers,
+            meta={
+                # 是否使用代理
+                "isProxy": True,
+                #  重试中间件，超时时间
+                'download_timeout': 3
+            })
 
     """ 列表页，如果存在下一页，再次回调 """
 
     def parse(self, response):
-        if "用户您好，我们的系统检测到您网络中存在异常访问请求。" in response.text:
-            logging.warning("网络异常！"+"=" * 30)
-            return
+        if "用户您好，我们的系统检测到您网络中存在异常访问请求。" in response.text or "您的访问出错了" in response.text or "function(){function h(a,c){return Math.floor(Math.random()*(c-a)+a)}function k(){var a=Math.random()" in response.text:
+            logging.warning("网络异常！" + "=" * 30)
+            # 保存验证码
+            # 保存错误网页
+            with open('error.html', 'w', encoding='utf-8') as f:
+                f.write(response.text)
+            # 重新发送请求
+            # self.start_requests(self)
+        # self.logger.info("获取到的网页源码{}".format(response.text,))
         url = response.xpath("//div[@class='vrwrap']//h3/a/@href").getall()
-        for item in url:
-            yield scrapy.Request(response.urljoin(item),
-                                 callback=self.detail_parse)
-        if "下一页" in response.text:
-            next_url = response.xpath("//a[@id='sogou_next']/@href").get()
-            yield scrapy.Request(response.urljoin(next_url), self.parse)
+        # self.logger.info("获取到的列表：{}".format(url,))
+        if isinstance(url, list):
+            if url != None:
+                for item in url:
+                    yield scrapy.Request(response.urljoin(item),
+                                         callback=self.detail_parse)
+                if "下一页" in response.text:
+                    self.logger.info("已经入下一页：{}".format("*" * 30))
+                    next_url = response.xpath(
+                        "//a[@id='sogou_next']/@href").get()
+                    yield scrapy.Request(response.urljoin(next_url),
+                                         self.parse,
+                                         meta={
+                                             "isProxy": True,
+                                             'download_timeout': 3
+                                         })
+            else:
+                logging.info("获取到的列表为空")
+        # with open('error.html', 'w', encoding='utf-8') as f:
+        #     f.write(response.text)
+        logging.info("获取到的不是列表")
 
     def detail_parse(self, response):
-
-        logging.warning("已经入详情页，获取url"+"*" * 30)
-        logging.warning(response.url)
+        item = SiteItem()
+        title = response.xpath("//head/title/text()").get()
+        url = response.url
+        item['title'] = title
+        item['url'] = url
+        return item
+        # logging.warning("已经入详情页，获取url" + "*" * 30)
+        # logging.warning(response.url)
