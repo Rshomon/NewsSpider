@@ -97,12 +97,13 @@ class SogouengineSpider(scrapy.Spider):
                     self.logger.info("已经入下一页：{}".format("*" * 30))
                     next_url = response.xpath(
                         "//a[@id='sogou_next']/@href").get()
-                    yield scrapy.Request(response.urljoin(next_url),
-                                         self.parse,
-                                         meta={
-                                             "isProxy": True,
-                                             'download_timeout': 3
-                                         })
+                    yield scrapy.Request(
+                        response.urljoin(next_url),
+                        self.parse,
+                        meta={
+                            #  "isProxy": True,
+                            'download_timeout': 3
+                        })
             else:
                 logging.info("获取到的列表为空")
         # with open('error.html', 'w', encoding='utf-8') as f:

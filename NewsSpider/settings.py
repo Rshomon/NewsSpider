@@ -49,7 +49,7 @@ ROBOTSTXT_OBEY = False
 # # 持久化
 # SCHEDULER_FLUSH_ON_START = True
 
-
+PROXYPOOL = "http://www.rashomon.top:5555/random"
 
 # Configure maximum concurrent requests performed by Scrapy (default: 16)
 #CONCURRENT_REQUESTS = 32

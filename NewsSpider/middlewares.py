@@ -8,19 +8,23 @@ from NewsSpider.spiders.log.init import Logger
 from twisted.internet.error import TimeoutError, TCPTimedOutError, ConnectionRefusedError
 from twisted.web._newclient import ResponseNeverReceived
 from scrapy.core.downloader.handlers.http11 import TunnelError
+from fake_useragent import UserAgent
 
 logger = logging.getLogger(__name__)
+
+settings = get_project_settings()
 
 
 class UserAgentRandomMiddleware(object):
     def __init__(self):
-        self.settings = get_project_settings()
-        self.user_agent = self.settings['USER_AGENT']
+        self.user_agent = settings['USER_AGENT']
+        self.ua = UserAgent()
 
     def process_request(self, request, spider):
-        ua = random.choice(self.user_agent)
-        request.headers["User-Agent"] = ua
-        logger.info("Current User-Agent:" + ua)
+        # ua = random.choice(self.user_agent)
+        # self.ua.random
+        request.headers["User-Agent"] = self.ua.random
+        logger.info("Current User-Agent:" + self.ua.random)
 
 
 '''
@@ -61,7 +65,7 @@ class ProxyRandomMiddleware(object):
         #     for item in f.readlines():
         #         li.add(item)
         #     self.pro_list = list(map(lambda x: x.replace("\n", ""), list(li)))
-        self.request_url = "http://127.0.0.1:5555/random"
+        self.request_url = settings["PROXYPOOL"]
 
     def process_request(self, request, spider):
         if request.meta.get('isProxy'):
@@ -87,12 +91,13 @@ class ProxyRandomMiddleware(object):
         如果返回的response状态不是200,重新生成当前request对象
         '''
         # if response.status != 200:
-        pro = request.meta.get('proxy')
-        if response.status >= 400:
-            logging.info("当前代理连接错误")
-            return request
-        else:
-            logging.info("连接正常")
+        if request.meta.get('proxy'):
+            if response.status >= 400:
+                logging.info("当前代理连接错误")
+                return request
+            else:
+                logging.info("连接正常")
+            return response
         return response
 
     def process_exception(self, request, exception, spider):

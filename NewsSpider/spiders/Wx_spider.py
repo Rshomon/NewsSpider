@@ -32,7 +32,7 @@ class WxspiderSpider(scrapy.Spider):
             '_sug_': 'n',
         }
         url = start_urls + urlencode(param)
-        yield scrapy.Request(url=url, callback=self.parsea)
+        yield scrapy.Request(url=url, callback=self.parsea,meta={"isProxy":True})
 
     '''
     获取列表中的@href，然后交由回掉处理
@@ -60,7 +60,7 @@ class WxspiderSpider(scrapy.Spider):
             # 获取当前页面的下一页地址，重新解析
             yield scrapy.Request(url=site_url,
                                  callback=self.parsea,
-                                 headers=headers)
+                                 headers=headers,meta={"isProxy":True})
 
         # 目标网址
         response_url = response.xpath(
@@ -75,7 +75,7 @@ class WxspiderSpider(scrapy.Spider):
 
             yield scrapy.Request(url=url,
                                  callback=self.analysis_url,
-                                 meta={"time": t},
+                                 meta={"time": t,"isProxy":True},
                                  headers=headers)
 
     def analysis_url(self, response):
@@ -86,7 +86,7 @@ class WxspiderSpider(scrapy.Spider):
             print(new_urlaaaaa + "\n")
             yield scrapy.Request(new_urlaaaaa,
                                  callback=self.parse_detail,
-                                 dont_filter=True)
+                                 dont_filter=True,meta={"isProxy":True})
         else:
             pass
 
