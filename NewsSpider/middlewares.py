@@ -24,7 +24,8 @@ class UserAgentRandomMiddleware(object):
         # ua = random.choice(self.user_agent)
         # self.ua.random
         request.headers["User-Agent"] = self.ua.random
-        logger.info("Current User-Agent:" + self.ua.random)
+        # ua输出
+        # logger.info("Current User-Agent:" + self.ua.random)
 
 
 '''

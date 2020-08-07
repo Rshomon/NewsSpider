@@ -39,12 +39,13 @@ from NewsSpider.items import SiteItem
 class SogouengineSpider(scrapy.Spider):
     name = 'Sogouengine'
     allowed_domains = ['sogou.com']
+    DOWNLOAD_DELAY = 1.6
     start_urls = ['http://sogou.com/']
     """ 解析搜狗搜索地址，传入参数 """
     def start_requests(self):
+        keys = ['河南职业技术学院','河南经贸职业学院','商丘职业技术学校']
         start_url = "https://www.sogou.com/sogou?"
         params = {
-            "query": "河南职业技术学院",
             "_ast": str(int(time.time())),
             "_asf": "www.sogou.com",
             "w": "01029901",
@@ -56,23 +57,28 @@ class SogouengineSpider(scrapy.Spider):
             "interation": "1728053249",
             "s_from": "result_up",
         }
-        url = start_url + urlencode(params)
-        headers = {
+        
+        keys = ['河南职业技术学院','河南经贸职业学院','商丘职业技术学校']
+        for key in keys:
+            params['query'] = key
+            url = start_url + urlencode(params)
+            headers = {
             'Accept':
             'text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.9',
             "Referer": url,
             'Host': "www.sogou.com"
         }
-        yield scrapy.Request(
-            url,
-            callback=self.parse,
-            headers=headers,
-            meta={
-                # 是否使用代理
-                "isProxy": True,
-                #  重试中间件，超时时间
-                'download_timeout': 3
-            })
+            self.logger.info('获取到关键字：{}'.format(key))
+            yield scrapy.Request(
+                url,
+                callback=self.parse,
+                headers=headers,
+                meta={
+                    # 是否使用代理
+                    # "isProxy": True,
+                    #  重试中间件，超时时间
+                    'download_timeout': 1
+                })
 
     """ 列表页，如果存在下一页，再次回调 """
 
@@ -85,6 +91,8 @@ class SogouengineSpider(scrapy.Spider):
                 f.write(response.text)
             # 重新发送请求
             # self.start_requests(self)
+            yield scrapy.Request(response.url,callback=self.parse)
+            
         # self.logger.info("获取到的网页源码{}".format(response.text,))
         url = response.xpath("//div[@class='vrwrap']//h3/a/@href").getall()
         # self.logger.info("获取到的列表：{}".format(url,))
@@ -92,7 +100,10 @@ class SogouengineSpider(scrapy.Spider):
             if url != None:
                 for item in url:
                     yield scrapy.Request(response.urljoin(item),
-                                         callback=self.detail_parse)
+                                         callback=self.detail_parse,meta={
+                # 是否使用代理
+                # "isProxy": True,
+            })
                 if "下一页" in response.text:
                     self.logger.info("已经入下一页：{}".format("*" * 30))
                     next_url = response.xpath(
