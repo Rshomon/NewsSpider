@@ -8,6 +8,7 @@ import scrapy
 
 class ArticelItem(scrapy.Item):
     # define the fields for your item here like:
+    # _id = scrapy.Field()
     # 文章标题
     title = scrapy.Field()
     # 推送时间

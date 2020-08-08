@@ -19,6 +19,12 @@ COMMANDS_MODULE = 'NewsSpider.Command'
 # Crawl responsibly by identifying yourself (and your website) on the user-agent
 #USER_AGENT = 'NewsSpider (+http://www.yourdomain.com)'
 
+
+# MongoDB配置
+MONGGODB_HOST = 'localhost'
+MONGODB_PORT = 27017
+MONGODB_DB = 'DB'
+
 # Obey robots.txt rules
 ROBOTSTXT_OBEY = False
 

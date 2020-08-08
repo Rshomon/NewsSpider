@@ -8,8 +8,9 @@
 from itemadapter import ItemAdapter
 import logging
 import json
+import pymongo
 from scrapy.exporters import JsonItemExporter
-
+from scrapy.utils.project import get_project_settings
 
 class NewsSpiderPipeline(object):
     def process_item(self, item, spider):
@@ -19,12 +20,21 @@ class NewsSpiderPipeline(object):
 
 class SogouSpiderPipeline(object):
     def __init__(self):
-        self.file = open('ArticleInfo.json', 'ab')
-        self.exporter = JsonItemExporter(self.file,
-                                         ensure_ascii=False,
-                                         encoding="utf-8")
-        # 开启数据存储（json）
-        self.exporter.start_exporting()
+        self.settings = get_project_settings()
+        self.port = self.settings['MONGODB_PORT']
+        self.host = self.settings['MONGODB_HOST']
+        self.db = self.settings['MONGODB_DB']
+
+        # self.file = open('ArticleInfo.json', 'ab')
+        # self.exporter = JsonItemExporter(self.file,
+        #                                  ensure_ascii=False,
+        #                                  encoding="utf-8")
+        # # 开启数据存储（json）
+        # self.exporter.start_exporting()
+        # 开启mongodb连接
+        self.client = pymongo.MongoClient(host=self.host,port=self.port)
+        self.db  = self.client[self.db]
+        self.info = self.db['newsinfo']
 
     # 爬虫开启时调用
 
@@ -33,8 +43,9 @@ class SogouSpiderPipeline(object):
 # 存储相关操作
 
     def process_item(self, item, spider):
-        self.exporter.export_item(item)
+        # self.exporter.export_item(item)
         logging.info(item)
+        self.info.insert_one(dict(item))
         return item
 
 
@@ -43,5 +54,5 @@ class SogouSpiderPipeline(object):
     def close_spider(self, spider):
         print("爬虫关闭")
         # 关闭数据存储（json）
-        self.exporter.finish_exporting()
-        self.file.close()
+        # self.exporter.finish_exporting()
+        # self.file.close()
