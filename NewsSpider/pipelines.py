@@ -11,6 +11,8 @@ import json
 import pymongo
 from scrapy.exporters import JsonItemExporter
 from scrapy.utils.project import get_project_settings
+import copy
+
 
 class NewsSpiderPipeline(object):
     def process_item(self, item, spider):
@@ -32,8 +34,8 @@ class SogouSpiderPipeline(object):
         # # 开启数据存储（json）
         # self.exporter.start_exporting()
         # 开启mongodb连接
-        self.client = pymongo.MongoClient(host=self.host,port=self.port)
-        self.db  = self.client[self.db]
+        self.client = pymongo.MongoClient(host=self.host, port=self.port)
+        self.db = self.client[self.db]
         self.info = self.db['newsinfo']
 
     # 爬虫开启时调用
@@ -44,7 +46,24 @@ class SogouSpiderPipeline(object):
 
     def process_item(self, item, spider):
         # self.exporter.export_item(item)
-        logging.info(item)
+        item_dic = {}
+        # item = ItemAdapter(item)
+        item_input = copy.deepcopy(item)
+        # 处理长篇文章的输出
+        content = item_input.get("detail_content", None)
+        if content != None:
+            content = "".join(content)[:30] + "......"
+        # logging.info(f"title:{item_input['title']}\npush_time:{item_input['push_time']}\n")
+        item_input['detail_content'] = content
+
+        item_dic['title'] = item_input.get("title", None)
+        item_dic['push_time'] = item_input.get("push_time", None)
+        item_dic['author'] = item_input.get("author", None)
+        item_dic['url'] = item_input.get("url", None)
+        item_dic['detail_content'] = content
+        logging.info(f'{item_input}')
+        # logging.info(item)
+        # 入库
         self.info.insert_one(dict(item))
         return item
 

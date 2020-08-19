@@ -19,7 +19,6 @@ COMMANDS_MODULE = 'NewsSpider.Command'
 # Crawl responsibly by identifying yourself (and your website) on the user-agent
 #USER_AGENT = 'NewsSpider (+http://www.yourdomain.com)'
 
-
 # MongoDB配置
 MONGGODB_HOST = 'localhost'
 MONGODB_PORT = 27017
@@ -28,7 +27,7 @@ MONGODB_DB = 'DB'
 # Obey robots.txt rules
 ROBOTSTXT_OBEY = False
 
-# LOG_LEVEL = "INFO"
+LOG_LEVEL = "INFO"
 
 # LOG_FILE = "info.log"
 
@@ -109,7 +108,7 @@ ITEM_PIPELINES = {
     'NewsSpider.pipelines.NewsSpiderPipeline': None,
     'NewsSpider.pipelines.SogouSpiderPipeline': 200,
     # 默认将返回的itme，存储到redis上
-#    'scrapy_redis.pipelines.RedisPipeline': 300,
+    #    'scrapy_redis.pipelines.RedisPipeline': 300,
 }
 
 # Enable and configure the AutoThrottle extension (disabled by default)
@@ -127,11 +126,11 @@ ITEM_PIPELINES = {
 
 # Enable and configure HTTP caching (disabled by default)
 # See https://docs.scrapy.org/en/latest/topics/downloader-middleware.html#httpcache-middleware-settings
-#HTTPCACHE_ENABLED = True
-#HTTPCACHE_EXPIRATION_SECS = 0
-#HTTPCACHE_DIR = 'httpcache'
-#HTTPCACHE_IGNORE_HTTP_CODES = []
-#HTTPCACHE_STORAGE = 'scrapy.extensions.httpcache.FilesystemCacheStorage'
+HTTPCACHE_ENABLED = True
+HTTPCACHE_EXPIRATION_SECS = 0
+HTTPCACHE_DIR = 'httpcache'
+HTTPCACHE_IGNORE_HTTP_CODES = []
+HTTPCACHE_STORAGE = 'scrapy.extensions.httpcache.FilesystemCacheStorage'
 
 USER_AGENT = [
     'Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/535.1 (KHTML, like Gecko) Chrome/14.0.835.163 Safari/535.1',

@@ -109,7 +109,7 @@ class WxspiderSpider(scrapy.Spider):
             "author",
             "//div[@id='meta_content']/span[@class='rich_media_meta rich_media_meta_text']/text()"
         )
-        WeixinspiderItemLoader.add_value("push_time", push_date)
+        WeixinspiderItemLoader.add_value("url", response.url)
         # author = response.xpath(
         # "//div[@id='meta_content']/span[@class='rich_media_meta rich_media_meta_text']/text()"
         # ).get()
@@ -126,7 +126,7 @@ class WxspiderSpider(scrapy.Spider):
 
         # title = response.xpath("//h2[@id='activity-name']/text()").get()
         # 文章内容
-        WeixinspiderItemLoader.add_xpath("//div[@id='js_content']//text()")
+        WeixinspiderItemLoader.add_xpath("detail_content","//div[@id='js_content']//text()")
 
         weixin_info = WeixinspiderItemLoader.load_item()
         return weixin_info

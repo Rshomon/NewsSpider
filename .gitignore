@@ -5,3 +5,4 @@ __pycacge__
 .vscode
 *.json
 *.html
+.scrapy
