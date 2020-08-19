@@ -32,7 +32,9 @@ class WxspiderSpider(scrapy.Spider):
             '_sug_': 'n',
         }
         url = start_urls + urlencode(param)
-        yield scrapy.Request(url=url, callback=self.parsea,meta={"isProxy":False,"download_timeout":2})
+        yield scrapy.Request(url=url,
+                             callback=self.parsea,
+                             meta={"isProxy": True})
 
     '''
     获取列表中的@href，然后交由回掉处理
@@ -75,6 +77,7 @@ class WxspiderSpider(scrapy.Spider):
 
             yield scrapy.Request(url=url,
                                  callback=self.analysis_url,
+
                                  meta={"time": t,"isProxy":False},
                                  headers=headers)
 
